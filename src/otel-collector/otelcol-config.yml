@@ -94,8 +94,6 @@ exporters:
     endpoint: http://mimir:9009/api/v1/push
     tls:
       insecure: true
-    headers:
-      X-Scope-OrgID: demo
 
 processors:
   batch:

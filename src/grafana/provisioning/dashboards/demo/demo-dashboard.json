@@ -568,7 +568,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "{service_name=\"${service}\"} | json | line_format \"{{.body}}\"",
+          "expr": "{service_name=\"${service}\"}",
           "refId": "A"
         }
       ],
