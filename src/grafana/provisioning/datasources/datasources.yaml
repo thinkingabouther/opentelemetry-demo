@@ -7,6 +7,9 @@ datasources:
     url: http://tempo:3200
     uid: tempo
     isDefault: true
+    jsonData:
+      serviceMap:
+        datasourceUid: 'mimir'
 
   - name: Loki
     type: loki

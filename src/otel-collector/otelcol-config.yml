@@ -111,16 +111,19 @@ processors:
           - replace_match(name, "GET /api/products/*", "GET /api/products/{productId}")
 
 connectors:
-  spanmetrics:
+  servicegraph:
+    dimensions:
+      - service.name
+      - span.name
 
 service:
   pipelines:
     traces:
       receivers: [otlp]
       processors: [memory_limiter, transform, batch]
-      exporters: [otlp/tempo, debug, spanmetrics]
+      exporters: [otlp/tempo, debug, servicegraph]
     metrics:
-      receivers: [hostmetrics, docker_stats, httpcheck/frontend-proxy, otlp, redis, spanmetrics]
+      receivers: [hostmetrics, docker_stats, httpcheck/frontend-proxy, otlp, redis, servicegraph]
       processors: [memory_limiter, batch]
       exporters: [prometheusremotewrite/mimir, debug]
     logs:

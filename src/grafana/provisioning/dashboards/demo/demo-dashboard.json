@@ -1095,8 +1095,9 @@
             "type": "tempo",
             "uid": "tempo"
           },
-          "queryType": "dependencyGraph",
-          "refId": "A"
+          "queryType": "serviceMap",
+          "refId": "A",
+          "serviceMapQuery": "{client=\"$service\"}"
         }
       ],
       "title": "Service Dependency",
