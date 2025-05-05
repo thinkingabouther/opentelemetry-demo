@@ -453,6 +453,7 @@
             "uid": "loki"
           },
           "expr": "sum by (severity_text) (count_over_time({service_name=\"${service}\"}[5m]))",
+          "legendFormat": "{{severity_text}}",
           "refId": "A"
         }
       ],
@@ -578,7 +579,11 @@
           "id": "organize",
           "options": {
             "excludeByName": {
-              "@timestamp": true
+              "@timestamp": true,
+              "id": true,
+              "labelTypes": true,
+              "labels": false,
+              "tsNs": true
             },
             "includeByName": {},
             "indexByName": {
@@ -605,6 +610,15 @@
               "traceId": 20
             },
             "renameByName": {}
+          }
+        },
+        {
+          "id": "extractFields",
+          "options": {
+            "delimiter": ",",
+            "keepTime": false,
+            "replace": false,
+            "source": "labels"
           }
         }
       ],
