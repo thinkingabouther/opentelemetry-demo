@@ -82,20 +82,18 @@ receivers:
 
 exporters:
   debug:
-  otlp:
-    endpoint: "jaeger:4317"
+  otlp/tempo:
+    endpoint: tempo:4317
     tls:
       insecure: true
-  otlphttp/prometheus:
-    endpoint: "http://prometheus:9090/api/v1/otlp"
+  otlphttp/loki:
+    endpoint: http://loki:3100/otlp
     tls:
       insecure: true
-  opensearch:
-    logs_index: otel
-    http:
-      endpoint: "http://opensearch:9200"
-      tls:
-        insecure: true
+  prometheusremotewrite/mimir:
+    endpoint: http://mimir:9009/api/v1/push
+    tls:
+      insecure: true
 
 processors:
   batch:
@@ -114,21 +112,31 @@ processors:
 
 connectors:
   spanmetrics:
+  servicegraph:
+    dimensions:
+      - db.system
+      - messaging.system
+    virtual_node_peer_attributes:
+      - db.name
+      - db.system
+      - messaging.system
+      - peer.service
+    virtual_node_extra_label: true
 
 service:
   pipelines:
     traces:
       receivers: [otlp]
       processors: [memory_limiter, transform, batch]
-      exporters: [otlp, debug, spanmetrics]
+      exporters: [otlp/tempo, debug, servicegraph, spanmetrics]
     metrics:
-      receivers: [hostmetrics, docker_stats, httpcheck/frontend-proxy, otlp, redis, spanmetrics]
+      receivers: [hostmetrics, docker_stats, httpcheck/frontend-proxy, otlp, redis, servicegraph, spanmetrics]
       processors: [memory_limiter, batch]
-      exporters: [otlphttp/prometheus, debug]
+      exporters: [prometheusremotewrite/mimir, debug]
     logs:
       receivers: [otlp]
       processors: [memory_limiter, batch]
-      exporters: [opensearch, debug]
+      exporters: [otlphttp/loki, debug]
   telemetry:
     metrics:
       level: detailed

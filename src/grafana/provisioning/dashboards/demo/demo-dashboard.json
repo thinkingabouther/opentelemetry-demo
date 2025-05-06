@@ -68,7 +68,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "webstore-metrics"
+        "uid": "mimir"
       },
       "fieldConfig": {
         "defaults": {
@@ -152,7 +152,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "webstore-metrics"
+            "uid": "mimir"
           },
           "editorMode": "code",
           "expr": "sum by (span_name) (rate(traces_span_metrics_duration_milliseconds_count{service_name=\"${service}\"}[$__rate_interval]))",
@@ -167,7 +167,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "webstore-metrics"
+        "uid": "mimir"
       },
       "description": "",
       "fieldConfig": {
@@ -251,7 +251,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "webstore-metrics"
+            "uid": "mimir"
           },
           "editorMode": "code",
           "expr": "sum by (span_name) (rate(traces_span_metrics_calls_total{status_code=\"STATUS_CODE_ERROR\", service_name=\"${service}\"}[$__rate_interval]))",
@@ -267,7 +267,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "webstore-metrics"
+        "uid": "mimir"
       },
       "description": "",
       "fieldConfig": {
@@ -352,7 +352,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "webstore-metrics"
+            "uid": "mimir"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -380,8 +380,8 @@
     },
     {
       "datasource": {
-        "type": "grafana-opensearch-datasource",
-        "uid": "webstore-logs"
+        "type": "loki",
+        "uid": "loki"
       },
       "description": "",
       "fieldConfig": {
@@ -448,35 +448,13 @@
       "pluginVersion": "11.5.2",
       "targets": [
         {
-          "alias": "",
-          "bucketAggs": [
-            {
-              "field": "severity.text.keyword",
-              "id": "3",
-              "settings": {
-                "min_doc_count": "1",
-                "order": "desc",
-                "orderBy": "_count",
-                "size": "0"
-              },
-              "type": "terms"
-            }
-          ],
           "datasource": {
-            "type": "grafana-opensearch-datasource",
-            "uid": "webstore-logs"
+            "type": "loki",
+            "uid": "loki"
           },
-          "format": "table",
-          "metrics": [
-            {
-              "id": "1",
-              "type": "count"
-            }
-          ],
-          "query": "search source=otel\n| where resource.service.name=\"${service}\"\n| stats count() by severity.text",
-          "queryType": "PPL",
-          "refId": "A",
-          "timeField": "observedTimestamp"
+          "expr": "sum by (severity_text) (count_over_time({service_name=\"${service}\"}[5m]))",
+          "legendFormat": "{{severity_text}}",
+          "refId": "A"
         }
       ],
       "title": "Log Records by Severity",
@@ -498,8 +476,8 @@
     },
     {
       "datasource": {
-        "type": "grafana-opensearch-datasource",
-        "uid": "webstore-logs"
+        "type": "loki",
+        "uid": "loki"
       },
       "fieldConfig": {
         "defaults": {
@@ -587,29 +565,12 @@
       "pluginVersion": "11.5.2",
       "targets": [
         {
-          "alias": "",
-          "bucketAggs": [],
           "datasource": {
-            "type": "grafana-opensearch-datasource",
-            "uid": "webstore-logs"
+            "type": "loki",
+            "uid": "loki"
           },
-          "format": "table",
-          "hide": false,
-          "metrics": [
-            {
-              "id": "1",
-              "settings": {
-                "order": "desc",
-                "size": "100",
-                "useTimeRange": true
-              },
-              "type": "raw_data"
-            }
-          ],
-          "query": "search source=otel\n| where resource.service.name=\"${service}\"\n| sort - observedTimestamp \n| head 100",
-          "queryType": "PPL",
-          "refId": "A",
-          "timeField": "observedTimestamp"
+          "expr": "{service_name=\"${service}\"}",
+          "refId": "A"
         }
       ],
       "title": "Log Records (100 recent entries)",
@@ -618,7 +579,11 @@
           "id": "organize",
           "options": {
             "excludeByName": {
-              "@timestamp": true
+              "@timestamp": true,
+              "id": true,
+              "labelTypes": true,
+              "labels": false,
+              "tsNs": true
             },
             "includeByName": {},
             "indexByName": {
@@ -646,6 +611,15 @@
             },
             "renameByName": {}
           }
+        },
+        {
+          "id": "extractFields",
+          "options": {
+            "delimiter": ",",
+            "keepTime": false,
+            "replace": false,
+            "source": "labels"
+          }
         }
       ],
       "type": "table"
@@ -666,7 +640,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "webstore-metrics"
+        "uid": "mimir"
       },
       "fieldConfig": {
         "defaults": {
@@ -749,7 +723,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "webstore-metrics"
+            "uid": "mimir"
           },
           "editorMode": "code",
           "expr": "rate(process_runtime_cpython_cpu_time_seconds_total{type=~\"system\"}[$__rate_interval])*100",
@@ -762,7 +736,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "webstore-metrics"
+            "uid": "mimir"
           },
           "editorMode": "code",
           "expr": "rate(process_runtime_cpython_cpu_time_seconds_total{type=~\"user\"}[$__rate_interval])*100",
@@ -788,7 +762,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "webstore-metrics"
+        "uid": "mimir"
       },
       "fieldConfig": {
         "defaults": {
@@ -871,7 +845,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "webstore-metrics"
+            "uid": "mimir"
           },
           "editorMode": "code",
           "expr": "process_runtime_cpython_memory_bytes{type=\"rss\"}",
@@ -895,7 +869,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "webstore-metrics"
+        "uid": "mimir"
       },
       "fieldConfig": {
         "defaults": {
@@ -977,7 +951,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "webstore-metrics"
+            "uid": "mimir"
           },
           "editorMode": "code",
           "expr": "rate(app_recommendations_counter_total{recommendation_type=\"catalog\"}[$__rate_interval])",
@@ -993,7 +967,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "webstore-metrics"
+        "uid": "mimir"
       },
       "fieldConfig": {
         "defaults": {
@@ -1076,7 +1050,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "webstore-metrics"
+            "uid": "mimir"
           },
           "editorMode": "code",
           "expr": "rate(otel_trace_span_processor_spans{job=\"quote\"}[2m])*120",
@@ -1104,8 +1078,8 @@
     },
     {
       "datasource": {
-        "type": "jaeger",
-        "uid": "webstore-traces"
+        "type": "tempo",
+        "uid": "tempo"
       },
       "fieldConfig": {
         "defaults": {},
@@ -1132,11 +1106,12 @@
       "targets": [
         {
           "datasource": {
-            "type": "jaeger",
-            "uid": "webstore-traces"
+            "type": "tempo",
+            "uid": "tempo"
           },
-          "queryType": "dependencyGraph",
-          "refId": "A"
+          "queryType": "serviceMap",
+          "refId": "A",
+          "serviceMapQuery": "{client=\"$service\"}"
         }
       ],
       "title": "Service Dependency",
@@ -1156,7 +1131,7 @@
         },
         "datasource": {
           "type": "prometheus",
-          "uid": "webstore-metrics"
+          "uid": "mimir"
         },
         "definition": "traces_span_metrics_duration_milliseconds_bucket",
         "includeAll": false,

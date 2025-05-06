@@ -8,7 +8,7 @@
         "on": true,
         "off": false
       },
-      "defaultVariant": "off"
+      "defaultVariant": "on"
     },
     "recommendationCacheFailure": {
       "description": "Fail recommendation service cache",
@@ -17,7 +17,7 @@
         "on": true,
         "off": false
       },
-      "defaultVariant": "off"
+      "defaultVariant": "on"
     },
     "adManualGc": {
       "description": "Triggers full manual garbage collections in the ad service",
@@ -35,7 +35,7 @@
         "on": true,
         "off": false
       },
-      "defaultVariant": "off"
+      "defaultVariant": "on"
     },
     "adFailure": {
       "description": "Fail ad service",
@@ -76,7 +76,7 @@
         "10%": 0.1,
         "off": 0
       },
-      "defaultVariant": "off"
+      "defaultVariant": "10%"
     },
     "paymentUnreachable": {
       "description": "Payment service is unavailable",
